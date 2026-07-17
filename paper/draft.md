@@ -33,7 +33,7 @@ summarization pipeline's divergence *decreases* with depth (Spearman
 caution that studies of prompt robustness in agent pipelines must control for
 nondeterminism amplification, and suggest that practitioners should invest
 prompt-hardening effort in early-position agents and convergent final stages.
-Harness, prompts, raw runs, and analysis are released for reproduction.
+Harness, prompts, raw runs, and analysis are released for reproduction at https://github.com/koushik717/prompt-sensitivity-chains.
 
 ## 1. Introduction
 
