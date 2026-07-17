@@ -1,0 +1,11 @@
+# Pinned versions used for the experiments reported in the paper
+# (Python 3.11+; run inside a venv: python3 -m venv .venv && source .venv/bin/activate)
+anthropic==0.116.0
+sentence-transformers==5.6.0
+torch==2.12.1
+transformers==5.13.0
+pandas==3.0.3
+numpy==2.5.1
+scipy==1.18.0
+matplotlib==3.11.0
+PyYAML==6.0.3

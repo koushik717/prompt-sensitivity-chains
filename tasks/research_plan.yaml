@@ -1,0 +1,89 @@
+name: research_plan
+description: >
+  Four-stage research planning pipeline: scoper -> planner -> critic -> finalizer.
+  Input is a broad research question; final output is a refined research plan.
+roles: [scoper, planner, critic, finalizer]
+structured_output: false
+
+judge_rubric_version: v2
+# Depth-appropriate rubrics: depth 1 = scoped question, 2 = study plan,
+# 3 = critiqued/revised plan, 4 = final plan document.
+judge_rubrics_by_depth:
+  1: |
+    You are grading a SCOPED RESEARCH QUESTION (the output of a scoping pass on
+    a broad question) on a 0-10 scale. Award points as follows (integer total):
+    - Boundedness (0-4): population, setting, and timeframe explicitly defined.
+    - Exclusions (0-3): what is out of scope is stated explicitly.
+    - Clarity (0-2): a single, precisely worded, answerable question.
+    - Format (0-1): the scoped question and bounds only, no meta-commentary.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  2: |
+    You are grading a STUDY PLAN produced from a scoped research question on a
+    0-10 scale. Award points as follows (integer total):
+    - Design (0-3): concrete, appropriate study design.
+    - Data (0-3): specific data sources and sample-size reasoning.
+    - Analysis (0-2): named analysis method matched to the design.
+    - Feasibility (0-2): realistic timeline or resource notes.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  3: |
+    You are grading a CRITIQUED AND REVISED study plan on a 0-10 scale.
+    Award points as follows (integer total):
+    - Critique quality (0-4): identifies at least two substantive threats to
+      validity or weaknesses in the plan.
+    - Constructiveness (0-3): concrete fixes or design changes proposed.
+    - Method (0-2): the underlying plan remains concrete (design, data, analysis).
+    - Format (0-1): critique/revision only, no meta-commentary.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  4: |
+    You are grading a FINAL RESEARCH PLAN document on a 0-10 scale.
+    Award points as follows (integer total):
+    - Scope (0-2): clearly bounded question with stated inclusions/exclusions.
+    - Method (0-3): concrete methodology with data sources and analysis approach.
+    - Rigor (0-3): addresses at least two threats to validity or limitations.
+    - Feasibility (0-2): realistic timeline or resource notes.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+judge_rubric: |
+  You are grading a research plan on a 0-10 scale.
+  Award points as follows (integer total):
+  - Scope (0-2): clearly bounded question with stated inclusions/exclusions.
+  - Method (0-3): concrete methodology with data sources and analysis approach.
+  - Rigor (0-3): addresses at least two threats to validity or limitations.
+  - Feasibility (0-2): realistic timeline or resource notes.
+  Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+
+inputs:
+  - id: rp_0
+    text: |
+      Research question: Does four-day workweek adoption change employee
+      retention in mid-size software companies? Context: several 2024-2025
+      pilots reported lower attrition, but most lacked control groups. Interested
+      in a design that could plausibly be run with public data plus surveys of
+      50-200 firms within one year on a small-team budget.
+  - id: rp_1
+    text: |
+      Research question: How does urban tree canopy affect summer nighttime
+      temperatures at the neighborhood block scale? Context: satellite land
+      surface temperature is coarse; we have access to a fleet of 300 low-cost
+      air temperature sensors and one mid-size city government partner willing
+      to share its tree inventory and permit sensor installation for 18 months.
+  - id: rp_2
+    text: |
+      Research question: Do code-generation assistants change the defect rate
+      of code merged by junior developers in their first year? Context: partner
+      company (~800 engineers) can provide anonymized commit, review, and
+      incident data spanning two years before and after assistant rollout.
+      Concern: adoption was voluntary and staggered, so selection effects loom.
+  - id: rp_3
+    text: |
+      Research question: Does microfinance group lending improve household food
+      security during seasonal shocks in rural coastal regions? Context: an NGO
+      partner operates in 40 villages, half of which received the program in a
+      staggered rollout since 2023. Household survey capacity is 1,200
+      interviews per round, two rounds funded.
+  - id: rp_4
+    text: |
+      Research question: How reliable are LLM-as-judge scores compared to
+      expert human grading for evaluating scientific summaries? Context: we
+      can afford roughly 600 expert-graded summaries as ground truth and want
+      the study to inform whether automated judging is acceptable for a larger
+      benchmark. Multiple judge models and prompt formats are in scope.

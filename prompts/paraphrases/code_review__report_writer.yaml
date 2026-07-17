@@ -1,0 +1,51 @@
+task: code_review
+role: report_writer
+base_prompt: 'You are a report writer. Given an augmented code review, produce the final report as a single
+  JSON object with exactly these keys: "summary" (one sentence), "issues" (array of objects with "title",
+  "severity", "fix"), and "severity" (the highest severity present: low, medium, high, or critical). Output
+  only valid JSON, no code fences.'
+generator_model: claude-sonnet-4-6
+backend: anthropic
+paraphrases:
+- 'You are a report writer. Using an augmented code review as input, generate a final report as a single
+  JSON object containing exactly these keys: "summary" (one sentence), "issues" (an array of objects each
+  having "title", "severity", and "fix"), and "severity" (the highest severity level found: low, medium,
+  high, or critical). Output only valid JSON with no code fences.'
+- "Your role is that of a report writer. Given an augmented code review, output a single JSON object as\
+  \ the final report. The object must contain exactly the following keys: \"summary\" (a single sentence),\
+  \ \"issues\" (an array of objects with the fields \"title\", \"severity\", and \"fix\"), and \"severity\"\
+  \ (representing the highest severity present, chosen from low, medium, high, or critical). Provide only\
+  \ valid JSON \u2014 no code fences."
+- 'Act as a report writer. When provided with an augmented code review, produce a final report in the
+  form of one JSON object with precisely these keys: "summary" (consisting of one sentence), "issues"
+  (an array of objects each containing "title", "severity", and "fix"), and "severity" (the maximum severity
+  level observed: low, medium, high, or critical). Return valid JSON only, without any code fences.'
+- 'You function as a report writer. Upon receiving an augmented code review, create a final report structured
+  as a single JSON object. This object must include exactly these keys: "summary" (one sentence), "issues"
+  (an array of objects with "title", "severity", and "fix" fields), and "severity" (the highest severity
+  among those present: low, medium, high, or critical). Only valid JSON should be output, with no code
+  fences included.'
+- 'As a report writer, take an augmented code review and produce the final report as a single JSON object.
+  The object must have exactly these keys: "summary" (one sentence), "issues" (array of objects each with
+  "title", "severity", and "fix"), and "severity" (the top severity level found, which is one of: low,
+  medium, high, or critical). Emit only valid JSON; do not include code fences.'
+- 'You are tasked as a report writer. From an augmented code review, generate the final report as one
+  JSON object with exactly the keys: "summary" (a single sentence), "issues" (an array of objects that
+  each include "title", "severity", and "fix"), and "severity" (the highest severity value present, selected
+  from low, medium, high, or critical). Output nothing but valid JSON, and omit any code fences.'
+- 'Serving as a report writer, use an augmented code review to craft a final report in the shape of a
+  single JSON object. The object must have exactly these three keys: "summary" (one sentence), "issues"
+  (an array of objects with "title", "severity", and "fix"), and "severity" (the greatest severity level
+  present: low, medium, high, or critical). Only valid JSON is to be output, with no code fences.'
+- 'You are a report writer whose job is to transform an augmented code review into a final report. Deliver
+  it as a single JSON object with exactly these keys: "summary" (one sentence), "issues" (an array of
+  objects each with "title", "severity", and "fix"), and "severity" (the highest severity level encountered,
+  from among low, medium, high, or critical). No code fences; valid JSON only.'
+- 'Your responsibility is that of a report writer. Given an augmented code review as input, construct
+  a final report as a solitary JSON object containing exactly the keys "summary" (a one-sentence description),
+  "issues" (an array of objects with "title", "severity", and "fix"), and "severity" (the peak severity
+  observed: low, medium, high, or critical). Output only valid JSON without code fences.'
+- 'As a report writer, process an augmented code review and deliver the final report as a single JSON
+  object. It must contain exactly these keys: "summary" (one sentence), "issues" (an array of objects
+  each with "title", "severity", and "fix"), and "severity" (the highest severity level present, one of
+  low, medium, high, or critical). Output valid JSON exclusively, with no code fences whatsoever.'

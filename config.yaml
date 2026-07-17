@@ -1,0 +1,49 @@
+# Experiment configuration — Compounding Prompt Sensitivity in Chained LLM Agents
+# Swap backend to "anthropic" and set ANTHROPIC_API_KEY to run against the real API.
+
+backend: anthropic       # "anthropic" | "mock" (deterministic offline backend for plumbing tests)
+
+models:
+  agent: claude-haiku-4-5-20251001      # cheap model for chain agents
+  paraphrase: claude-sonnet-4-6         # generates paraphrase sets (sonnet-5 rejects temperature)
+  judge: claude-sonnet-4-6              # LLM-as-judge; MUST differ from agent model
+
+generation:
+  temperature: 0.0        # agents: isolate prompt-driven variance from sampling variance
+  paraphrase_temperature: 0.9
+  judge_temperature: 0.0
+  max_tokens: 1024
+  seed: 0                 # deterministic seed used everywhere applicable
+
+experiment:
+  n_inputs: 5             # input documents per task (fixed across conditions)
+  n_paraphrases: 10       # paraphrases per base prompt
+  depths: [1, 2, 3, 4]
+  positions: [first, middle, last]   # which agent's prompt is perturbed (deduped per depth)
+  control_repeats: 5      # canonical-prompt repeats at temp 0 -> nondeterminism noise floor
+  control_input_index: 0  # control condition uses this input only (keeps cost small)
+
+paraphrase_validation:
+  embedding_model: all-MiniLM-L6-v2
+  min_cosine_similarity: 0.85
+
+rate_limit:
+  max_concurrent: 4
+  requests_per_minute: 50
+  max_retries: 3
+  retry_base_delay_s: 2.0
+
+cost:
+  budget_usd: 50.0
+  # USD per million tokens (update to current pricing before real runs)
+  prices:
+    claude-haiku-4-5-20251001: {input: 1.00, output: 5.00}
+    claude-sonnet-4-6:         {input: 3.00, output: 15.00}
+
+paths:
+  tasks_dir: tasks
+  base_prompts: prompts/base_prompts.yaml
+  paraphrases_dir: prompts/paraphrases
+  raw_dir: results/raw
+  processed_dir: results/processed
+  figures_dir: results/figures

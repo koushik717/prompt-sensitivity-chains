@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# never commit credentials; the harness reads ANTHROPIC_API_KEY from the environment
+.env
+*.env
+# mock-backend artifacts (plumbing validation only, never research data)
+results/MOCK_VALIDATION_DO_NOT_PUBLISH/
+prompts/paraphrases_MOCK/
+.claude/

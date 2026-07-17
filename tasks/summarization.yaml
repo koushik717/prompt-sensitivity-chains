@@ -1,0 +1,137 @@
+name: summarization
+description: >
+  Four-stage summarization pipeline: extractor -> summarizer -> fact-checker -> editor.
+  Input is a news-style article; final output is a polished ~100-word summary.
+roles: [extractor, summarizer, fact_checker, editor]
+structured_output: false
+
+judge_rubric_version: v2
+# Depth-appropriate rubrics: the graded artifact is the output of the LAST agent
+# that ran (depth 1 = extraction, 2 = draft summary, 3 = fact-checked summary,
+# 4 = polished summary). Prevents penalizing intermediate outputs for not being
+# final summaries.
+judge_rubrics_by_depth:
+  1: |
+    You are grading an EXTRACTION of factual claims from a source article on a
+    0-10 scale. The expected artifact is a bulleted list of distinct claims,
+    numbers, names, and dates. Award points as follows (integer total):
+    - Coverage (0-4): captures the article's major claims and key figures.
+    - Fidelity (0-3): no invented or altered facts; figures preserved exactly.
+    - Atomicity (0-2): distinct, non-interpretive claims, one per bullet.
+    - Format (0-1): a bulleted list only, no meta-commentary.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  2: |
+    You are grading a DRAFT SUMMARY of a source article on a 0-10 scale.
+    Award points as follows (integer total):
+    - Coverage (0-4): captures the main claims and key figures of the article.
+    - Faithfulness (0-3): no fabricated or contradicted facts.
+    - Concision & clarity (0-2): roughly 80-120 words, readable prose.
+    - Format (0-1): plain prose, no meta-commentary about the task.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  3: |
+    You are grading a FACT-CHECKED SUMMARY of a source article on a 0-10 scale.
+    Award points as follows (integer total):
+    - Faithfulness & internal consistency (0-4): no fabricated, contradicted,
+      or internally inconsistent facts; no impossible figures or unsupported
+      superlatives.
+    - Coverage (0-3): captures the main claims and key figures of the article.
+    - Concision & clarity (0-2): roughly 80-120 words, readable prose.
+    - Format (0-1): plain prose, no meta-commentary about the task.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  4: |
+    You are grading a polished, final summary of a source article on a 0-10 scale.
+    Award points as follows (integer total):
+    - Coverage (0-4): captures the main claims and key figures of the article.
+    - Faithfulness (0-3): no fabricated or contradicted facts.
+    - Concision & clarity (0-2): roughly 80-120 words, readable prose.
+    - Format (0-1): plain prose, no meta-commentary about the task.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+judge_rubric: |
+  You are grading a summary of a source article on a 0-10 scale.
+  Award points as follows (integer total):
+  - Coverage (0-4): captures the main claims and key figures of the article.
+  - Faithfulness (0-3): no fabricated or contradicted facts.
+  - Concision & clarity (0-2): roughly 80-120 words, readable prose.
+  - Format (0-1): plain prose, no meta-commentary about the task.
+  Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+
+inputs:
+  - id: sum_0
+    text: |
+      The city council of Marlow Bay voted 6-1 on Tuesday to approve a $42 million
+      renovation of its aging ferry terminal, ending a two-year dispute over the
+      waterfront's future. The plan replaces the 1968 terminal building with a
+      smaller, all-electric facility and adds a public promenade. Councilmember
+      Rita Okafor, the lone dissenter, argued the city should have prioritized
+      seismic retrofits for three downtown bridges, which engineers rated
+      "deficient" in a 2024 report. Construction is scheduled to begin in March
+      and finish within 30 months. Ferry service will continue from a temporary
+      pier, though peak-hour capacity will drop by roughly 20 percent. Local
+      business groups supported the project, citing a study that projected 340
+      construction jobs and a 12 percent rise in foot traffic after completion.
+      Environmental groups won a late concession: the promenade will use permeable
+      paving and the terminal roof will host a 400-kilowatt solar array.
+  - id: sum_1
+    text: |
+      Researchers at Kestrel University reported that a low-cost soil sensor,
+      built from off-the-shelf parts costing under $9, matched laboratory
+      instruments in measuring nitrate levels across 14 test farms. In a
+      three-season trial covering wheat and soy fields, the sensor's readings
+      correlated with lab assays at r = 0.93. Farmers who used the sensors cut
+      fertilizer use by an average of 18 percent without reducing yields,
+      according to the study published in Field Systems Journal. The team cautions
+      that the device drifts in soils with high clay content and requires
+      recalibration every six weeks. A commercial partner plans a pilot of 2,000
+      units next spring across three states. Critics note the trial farms were
+      all within one climate zone, so performance elsewhere is unproven. The
+      lead author said the goal is to make precision agriculture "affordable at
+      smallholder scale," and the designs will be released under an open
+      hardware license in January.
+  - id: sum_2
+    text: |
+      The national rail operator Videric announced it will retire its overnight
+      sleeper fleet by 2029, replacing 44 aging trains with 28 new dual-mode
+      units that can run on both electrified and diesel segments. The $1.9
+      billion order, placed with manufacturer Anders Rail, includes a 15-year
+      maintenance contract. Videric says the new trains cut energy use per seat
+      by 31 percent and add lie-flat berths in standard class for the first
+      time. Unions criticized the plan because the new fleet needs 22 percent
+      fewer maintenance staff; the company says reductions will come through
+      retirement and retraining, not layoffs. Passenger advocates welcomed the
+      berths but warned that reducing total trains could cut nightly capacity
+      on the busiest corridor by 900 seats. The first units enter testing in
+      2027, with full service expected by mid-2029. A government spokesperson
+      called the order "the largest single investment in night rail in the
+      country's history."
+  - id: sum_3
+    text: |
+      A five-year study of 12,400 adults published this week found that people
+      who replaced 30 minutes of daily sitting with light activity such as
+      walking had a 17 percent lower incidence of type 2 diabetes. The effect
+      held after adjusting for diet, income, and baseline weight. Replacing
+      sitting with moderate exercise was linked to a 26 percent reduction.
+      The authors, based at the Harlan Institute of Public Health, used
+      wrist-worn accelerometers rather than self-reports, which they argue
+      makes the findings more reliable than earlier questionnaire-based work.
+      The study is observational, so it cannot prove causation, and participants
+      were 64 percent female and predominantly urban. An accompanying editorial
+      called the results "actionable at population scale" and urged employers
+      to add movement breaks. The research team has released anonymized data
+      and analysis code for replication, and a randomized follow-up trial in
+      three cities is scheduled to begin recruiting in the fall.
+  - id: sum_4
+    text: |
+      Deepwater engineering firm Solvane confirmed that its autonomous
+      inspection robot completed a 41-day survey of the Karst Ridge pipeline
+      network without surfacing, a record for battery-powered subsea vehicles.
+      The robot, named Puffin-3, inspected 612 kilometers of pipe at depths up
+      to 1,800 meters, using acoustic imaging to flag 57 anomalies, nine of
+      which were confirmed as coating failures requiring repair. Previous
+      surveys required a crewed support vessel costing about $120,000 per day;
+      Solvane says the autonomous approach cut total survey cost by roughly 70
+      percent. The company attributes the endurance record to a new
+      aluminum-seawater battery that trades recharge speed for energy density.
+      Regulators have not yet certified fully autonomous surveys for compliance
+      inspections, so a human review board audited all flagged anomalies.
+      Solvane plans to offer the service commercially next year and is in talks
+      with two North Sea operators, according to its chief technology officer.

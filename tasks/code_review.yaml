@@ -1,0 +1,126 @@
+name: code_review
+description: >
+  Four-stage code review pipeline: analyzer -> reviewer -> security_checker -> report_writer.
+  Input is a Python snippet; final output is a structured JSON review report.
+roles: [analyzer, reviewer, security_checker, report_writer]
+structured_output: true
+output_schema:
+  required_keys: [summary, issues, severity]   # final report must be JSON with these keys
+
+judge_rubric_version: v2
+# Depth-appropriate rubrics: depth 1 = static analysis, 2 = prioritized review,
+# 3 = security-augmented review, 4 = final JSON report.
+judge_rubrics_by_depth:
+  1: |
+    You are grading a STATIC ANALYSIS of the given Python snippet on a 0-10
+    scale. The expected artifact is prose/bullet analysis (not JSON).
+    Award points as follows (integer total):
+    - Bug detection (0-4): identifies the real defect(s) in the code.
+    - Breadth (0-3): considers error handling, performance, and concurrency
+      where relevant.
+    - Accuracy (0-2): no fabricated defects or misreadings of the code.
+    - Format (0-1): analysis only, no meta-commentary.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  2: |
+    You are grading a PRIORITIZED CODE REVIEW of the given Python snippet on a
+    0-10 scale. The expected artifact is a ranked review (not JSON).
+    Award points as follows (integer total):
+    - Bug detection (0-4): identifies the real defect(s) in the code.
+    - Prioritization (0-2): issues ranked sensibly by severity/impact.
+    - Actionability (0-3): concrete fix suggestions.
+    - Format (0-1): review only, no meta-commentary.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  3: |
+    You are grading a SECURITY-AUGMENTED CODE REVIEW of the given Python
+    snippet on a 0-10 scale. The expected artifact is a review with security
+    findings marked (not JSON). Award points as follows (integer total):
+    - Bug & vulnerability detection (0-4): identifies the real defect(s),
+      including any injection/unsafe patterns present.
+    - Security specificity (0-3): security findings named precisely
+      (e.g. SQL injection) and marked as security issues.
+    - Actionability (0-2): concrete fix suggestions.
+    - Format (0-1): review only, no meta-commentary.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+  4: |
+    You are grading a FINAL CODE REVIEW REPORT for the given Python snippet on
+    a 0-10 scale. Award points as follows (integer total):
+    - Bug detection (0-4): identifies the real defect(s) in the code.
+    - Security awareness (0-2): flags any injection/unsafe patterns present.
+    - Actionability (0-2): concrete fix suggestions.
+    - Format (0-2): valid JSON with keys summary, issues, severity.
+    Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+judge_rubric: |
+  You are grading a code review report for the given Python snippet on a 0-10 scale.
+  Award points as follows (integer total):
+  - Bug detection (0-4): identifies the real defect(s) in the code.
+  - Security awareness (0-2): flags any injection/unsafe patterns present.
+  - Actionability (0-2): concrete fix suggestions.
+  - Format (0-2): valid JSON with keys summary, issues, severity.
+  Respond with ONLY a JSON object: {"score": <int 0-10>, "rationale": "<one sentence>"}
+
+inputs:
+  - id: cr_0
+    text: |
+      def get_user(db, username):
+          query = "SELECT * FROM users WHERE name = '%s'" % username
+          rows = db.execute(query)
+          return rows[0]
+
+      def update_last_login(db, username):
+          user = get_user(db, username)
+          db.execute("UPDATE users SET last_login = NOW() WHERE id = %d" % user.id)
+  - id: cr_1
+    text: |
+      import threading
+
+      counter = 0
+
+      def worker(n):
+          global counter
+          for _ in range(n):
+              counter += 1
+
+      def run(total, threads=8):
+          ts = [threading.Thread(target=worker, args=(total // threads,)) for _ in range(threads)]
+          [t.start() for t in ts]
+          return counter
+  - id: cr_2
+    text: |
+      def load_config(path="config.json", cache={}):
+          if path in cache:
+              return cache[path]
+          import json
+          with open(path) as f:
+              data = json.loads(f.read())
+          cache[path] = data
+          return data
+
+      def merge_defaults(cfg, defaults):
+          for k in defaults:
+              if k not in cfg:
+                  cfg[k] = defaults[k]
+          return cfg
+  - id: cr_3
+    text: |
+      import os, pickle
+
+      def restore_session(session_dir, session_id):
+          path = os.path.join(session_dir, session_id)
+          with open(path, "rb") as f:
+              return pickle.load(f)
+
+      def cleanup(session_dir, keep):
+          for name in os.listdir(session_dir):
+              if name not in keep:
+                  os.remove(os.path.join(session_dir, name))
+  - id: cr_4
+    text: |
+      async def fetch_all(urls, client):
+          results = []
+          for url in urls:
+              resp = await client.get(url, timeout=None)
+              results.append(resp.json())
+          return results
+
+      def average_latency(samples):
+          return sum(samples) / len(samples)
