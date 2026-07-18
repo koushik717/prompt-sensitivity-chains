@@ -1,6 +1,8 @@
 # Noise or Sensitivity? Disentangling Prompt Perturbation Effects from Intrinsic Nondeterminism in Chained LLM Agents
 
-*Draft v2 — 2026-07-05. Numbers final (full grid, N=1470); all citations verified against the papers.*
+*Draft v2.3 — 2026-07-17. Numbers final (full grid, N=1470, 1335 valid perturbed
+runs); all citations verified against the papers; human paraphrase review
+performed; repository public.*
 
 ## Abstract
 
