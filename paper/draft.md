@@ -1,13 +1,13 @@
 # Noise or Sensitivity? Disentangling Prompt Perturbation Effects from Intrinsic Nondeterminism in Chained LLM Agents
 
-*Draft v2.4 — 2026-07-17. Numbers final (full grid, N=1470, 1335 valid perturbed
+*Draft v2.4, 2026-07-17. Numbers final (full grid, N=1470, 1335 valid perturbed
 runs); all citations verified against the papers; human paraphrase review
 performed; repository public.*
 
 ## Abstract
 
-Prompt sensitivity — the tendency of large language models to produce different
-outputs under semantically equivalent prompt rewordings — is well documented for
+Prompt sensitivity (the tendency of large language models to produce different
+outputs under semantically equivalent prompt rewordings) is well documented for
 single models, but its behavior in multi-agent pipelines, where one agent's
 output becomes the next agent's input, has not been measured. We ask whether
 paraphrase-induced divergence compounds with chain depth, and introduce the
@@ -20,16 +20,16 @@ excluded, with the 15 affected runs),
 we find that (1) apparent divergence growth with depth is largely *not* a
 prompt effect: unperturbed chains amplify intrinsic nondeterminism with depth,
 reaching a 40% catastrophic-divergence rate at depth 3 on the most open-ended
-task with no perturbation at all — a rate not distinguishable from perturbed
+task with no perturbation at all, a rate not distinguishable from perturbed
 runs given our control sample size (p = 0.31, n_control = 5), implying that
 intrinsic nondeterminism accounts for at minimum the majority of the observed
 catastrophe rate; (2) the residual paraphrase-attributable effect is
-modest and does not compound — excess divergence over the noise floor stays
+modest and does not compound: excess divergence over the noise floor stays
 flat or declines with depth; (3) perturbation *position* matters more than
 count of downstream stages: perturbing the first agent yields significantly
 more final-output divergence than perturbing the last (0.155 vs 0.116,
 Mann-Whitney p = 2.1×10⁻¹⁰, Cliff's δ = 0.246); and (4) format-constrained
-final stages act as attractors that repair both noise sources — our
+final stages act as attractors that repair both noise sources: our
 summarization pipeline's divergence *decreases* with depth (Spearman
 ρ = −0.196) and structured-output schema violations are 0%. Our results
 caution that studies of prompt robustness in agent pipelines must control for
@@ -45,17 +45,17 @@ reviewer feeding a report writer. Each stage consumes the previous stage's
 output as input, so any instability in an early stage has, in principle, the
 entire remaining pipeline through which to propagate. At the same time, a
 well-replicated line of work shows that individual LLMs are surprisingly
-sensitive to semantically irrelevant prompt variation — formatting, phrasing,
+sensitive to semantically irrelevant prompt variation: formatting, phrasing,
 and paraphrase changes can swing single-model benchmark performance by double
 digits [Sclar et al. 2024; Zhu et al. 2023 (PromptBench); Mizrahi et al.
 2024; Sun et al. 2023; Cao et al. 2024]. The natural worry, voiced but to our
 knowledge never measured, is multiplicative: if one agent is prompt-sensitive,
-is a chain of four agents four times as fragile — or worse?
+is a chain of four agents four times as fragile, or worse?
 
 This paper measures that question directly, and the measurement produces a
-twist. The naive experiment — paraphrase one agent's system prompt, run the
+twist. The naive experiment (paraphrase one agent's system prompt, run the
 chain, measure embedding divergence of the final output from a
-canonical-prompt run — shows divergence growing with depth on two of our three
+canonical-prompt run) shows divergence growing with depth on two of our three
 tasks, with catastrophic divergence (cosine divergence > 0.3) spiking from 0%
 at depth 1 to 20% at depth 3 in the pooled data. Reported alone, that would
 read as confirmation of compounding prompt sensitivity.
@@ -63,15 +63,15 @@ read as confirmation of compounding prompt sensitivity.
 It would be wrong. Our design includes a control arm that most prior
 robustness studies omit: the *same* chains, with *canonical* prompts at every
 position, run repeatedly at temperature 0. These unperturbed repeats are not
-identical — temperature-0 decoding is not deterministic in practice, with
+identical: temperature-0 decoding is not deterministic in practice, with
 accuracy variation of up to 15% documented across nominally deterministic
 runs [Atil et al. 2024, arXiv:2408.04667; see also Ouyang et al. 2023 (code
-generation); He / Thinking Machines Lab 2025] — and the small token-level differences they
+generation); He / Thinking Machines Lab 2025], and the small token-level differences they
 contain are amplified by exactly the same chain dynamics as paraphrase
 perturbations. On our most open-ended task
 (research planning), unperturbed depth-3 chains reach a mean divergence of
 0.297 and a 40% catastrophic-divergence rate; the corresponding perturbed
-runs reach 0.322 and 57% — not distinguishable from the controls given our
+runs reach 0.322 and 57%, not distinguishable from the controls given our
 control sample size (one-sided Mann-Whitney p = 0.31, n_control = 5). The
 depth-3 "catastrophe spike" is real, but at minimum the majority of it is not
 a prompt-sensitivity effect: it is the chain amplifying its own sampling
@@ -89,7 +89,7 @@ everywhere and roughly flat or declining: +0.079 → +0.032 across depths 1→4
 for summarization, a steady ≈ +0.025 for code review, and within noise for
 research planning. The pooled raw trend (Spearman ρ = 0.089) is significant
 but tiny, and per-task trends disagree in sign (code review +0.34,
-summarization −0.20) — the opposite of a universal amplification law.
+summarization −0.20), the opposite of a universal amplification law.
 
 **Position beats depth.** Where the paraphrase lands matters more than how
 many stages follow it in aggregate: perturbing the first agent produces
@@ -113,7 +113,7 @@ Our contributions:
    divergence from intrinsic sampling nondeterminism in chained LLM
    pipelines**, showing that
    what appears to be compounding prompt sensitivity is largely nondeterminism
-   amplification — unperturbed temperature-0 chains reach catastrophic
+   amplification: unperturbed temperature-0 chains reach catastrophic
    divergence rates of 40% at depth 3 on open-ended tasks.
 2. **A perturbation-position effect**: early-agent paraphrases cause
    significantly more final-output divergence than late-agent paraphrases
@@ -133,8 +133,8 @@ and the processed data.
 irrelevant prompt variation is by now well established. PromptBench [Zhu et
 al. 2023] measures robustness to adversarial prompt perturbations at
 character, word, sentence, and semantic levels across 8 tasks; Sclar et al.
-[2024] show that spurious formatting features alone — separators,
-capitalization, spacing — induce large performance swings; Sun et al. [2023]
+[2024] show that spurious formatting features alone (separators,
+capitalization, spacing) induce large performance swings; Sun et al. [2023]
 find that instruction-tuned models degrade on unseen paraphrases of their
 task instructions; and Cao et al. [2024] document gaps of up to 45 points
 between best- and worst-performing paraphrases of the same query, arguing for
@@ -150,7 +150,7 @@ literature studies how errors move through agent pipelines. Closest to us,
 the Hallucination Cascade study [arXiv:2606.07937] tracks claim-level factual
 inconsistency across sequential agents and finds that deeper cascades
 *reduce* normalized hallucination scores (0.422 → 0.272 over three agents) at
-a small cost in factual preservation — independently corroborating, via a
+a small cost in factual preservation, independently corroborating, via a
 different measurement (claim-level factuality vs output-embedding
 divergence), the convergent-stage repair we observe. From Spark to Fire
 [arXiv:2603.04474] models collaboration as a dependency graph and shows that
@@ -160,7 +160,7 @@ vulnerability classes. MAS-FIRE [arXiv:2602.19843] injects 15 fault types
 into MAS pipelines for reliability evaluation, and AgentAsk
 [arXiv:2510.07593] attributes MAS underperformance to errors at inter-agent
 message handoffs, proposing edge-level clarification. The key difference in
-our design: these works perturb with *errors* — injected faults, tracked
+our design: these works perturb with *errors*: injected faults, tracked
 hallucinations, corrupted messages. Our perturbation is *benign by
 construction* (validated semantically equivalent paraphrases), so any
 divergence we measure is attributable to sensitivity rather than to the
@@ -178,7 +178,7 @@ Most relevantly, Laban et al. [2025] show that in multi-turn conversation,
 temperature-0 decoding still yields high unreliability because subtle
 nondeterminism compounds across tokens and turns. Our control condition
 extends this compounding result from the multi-turn single-agent setting to
-multi-agent chains — and quantifies it per task and depth, showing it grows
+multi-agent chains, and quantifies it per task and depth, showing it grows
 to catastrophic levels (40% of unperturbed depth-3 runs on our most
 open-ended task) exactly where a naive reading would attribute the failures
 to prompt sensitivity.
@@ -189,7 +189,7 @@ nondeterminism literature perturbs nothing but stops at single calls or
 single-agent conversations. To our knowledge no prior work runs benign prompt
 perturbations through multi-stage pipelines *against a matched unperturbed
 control*, which is precisely the design needed to separate the two variance
-sources — and, in our data, the separation reverses the naive conclusion.
+sources. In our data, that separation reverses the naive conclusion.
 
 ## 3. Method
 
@@ -222,12 +222,12 @@ position first, middle (⌊depth/2⌋), or last (deduplicated per depth).
 
 ### 3.3 Conditions
 
-- **baseline** — canonical prompts at every position; the reference run per
+- **baseline**: canonical prompts at every position; the reference run per
   (task, input, depth).
-- **perturbed** — one position paraphrased: 3 tasks × 5 inputs × 10
+- **perturbed**: one position paraphrased: 3 tasks × 5 inputs × 10
   paraphrases × Σ positions(depth) = **1,350 runs** (15 excluded as
   pseudo-perturbed per §3.2; **1,335 analyzed**).
-- **control** — canonical prompts, 5 repeats at temperature 0 per
+- **control**: canonical prompts, 5 repeats at temperature 0 per
   (task, depth) on one fixed input = **60 runs**; quantifies intrinsic
   nondeterminism (the noise floor).
 
@@ -244,7 +244,7 @@ agent-call cost $13.68 (from logged per-call token counts).
   confirms this threshold separates rewordings from semantic derailment; see
   §5 case study).
 - **Excess divergence**: perturbed cell mean − control cell mean within
-  (task, depth) — the paraphrase-attributable component.
+  (task, depth), the paraphrase-attributable component.
 - **Task success**: LLM-as-judge (`claude-sonnet-4-6`, temperature 0),
   depth-appropriate versioned rubrics (v2) grading the artifact the depth-k
   chain actually produces; judge model ≠ agent model; 10% double-judged →
@@ -261,9 +261,9 @@ the position contrast. Effect sizes reported alongside p-values throughout.
 *(Figures: divergence_vs_depth.pdf, per_task_curves.pdf, success_vs_depth.pdf,
 divergence_violins.pdf. Tables from excess_divergence.csv, tail_metrics.csv.)*
 
-**4.1 Raw divergence grows weakly — and not uniformly — with depth.**
+**4.1 Raw divergence grows weakly and non-uniformly with depth.**
 Pooled across tasks, mean divergence rises from 0.0996 [95% CI 0.0908,
-0.1084] at depth 1 to 0.1272 [0.1186, 0.1364] at depth 4 — a 1.28×
+0.1084] at depth 1 to 0.1272 [0.1186, 0.1364] at depth 4, a 1.28×
 amplification, with a Spearman trend of ρ = 0.089 (p = 1.2×10⁻³):
 statistically detectable, but far from the multiplicative compounding the
 fragility hypothesis predicts. The pooled number moreover conceals
@@ -278,7 +278,7 @@ not of chaining itself.
 **4.2 The catastrophe spike is largely nondeterminism, not sensitivity.**
 Pooled catastrophe rate: 0% (d1) → 2.3% (d2) → 20.0% (d3) → 2.3% (d4);
 depth-3 spike driven entirely by research_plan (57.2%). Control chains at the
-same cell: mean divergence 0.297, catastrophe rate 40%, vs perturbed 0.322 —
+same cell: mean divergence 0.297, catastrophe rate 40%, vs perturbed 0.322,
 not distinguishable given the control sample size (one-sided Mann-Whitney
 p = 0.31, n_control = 5). At minimum, intrinsic nondeterminism accounts for
 the majority of the observed catastrophe rate at this cell; our control arm
@@ -302,7 +302,7 @@ excess is modest everywhere and shows no depth amplification in any task:
 for summarization it *declines* from +0.079 (d1) to +0.032 (d4); for code
 review it holds nearly constant at ≈ +0.025 across all four depths; for
 research planning it fluctuates within the noise (+0.038 at d1 to −0.037 at
-d4 — a negative excess, i.e. perturbed runs diverging *less* than
+d4, a negative excess, i.e. perturbed runs diverging *less* than
 unperturbed controls at depth 4). With n = 5 controls per cell these
 excesses are descriptive rather than tightly estimated, but their pattern is
 uniform: whatever divergence paraphrases inject, the chain does not multiply
@@ -311,7 +311,7 @@ it.
 **4.4 Position, not depth, is where prompt wording matters.** Restricting to
 depths ≥ 2 where both positions exist, perturbing the *first* agent yields a
 mean final divergence of 0.1554 (n = 450) against 0.1163 (n = 440) for the
-*last* agent — a significant difference (Mann-Whitney U, p = 2.1×10⁻¹⁰) with
+*last* agent, a significant difference (Mann-Whitney U, p = 2.1×10⁻¹⁰) with
 a small-to-medium effect size (Cliff's δ = 0.246). Restricting to depth ≥ 3
 where all three positions exist, the ordering is monotone in position:
 first 0.169 > middle 0.138 > last 0.129. Because first- and
@@ -323,17 +323,17 @@ late paraphrase can only re-style the nearly finished artifact.
 
 **4.5 Convergent stages repair both noise sources.** Three independent
 observations triangulate the same mechanism. First, the pooled catastrophe
-rate collapses from 20.0% at depth 3 to 2.3% at depth 4 — adding the final,
+rate collapses from 20.0% at depth 3 to 2.3% at depth 4: adding the final,
 most format-constrained stage (editor / finalizer / report writer) *reduces*
 catastrophic divergence. Second, summarization's negative depth trend (§4.1)
 shows repair acting on paraphrase perturbations specifically. Third, the
 structured-output check is perfect: 0% schema violations across all
-perturbed depth-4 code-review runs — no paraphrase anywhere in the chain
+perturbed depth-4 code-review runs: no paraphrase anywhere in the chain
 ever broke the final JSON contract. Judge scores tell the same story from
 the quality side: mean score dips at depth 3 (7.34 [7.20, 7.48]) exactly
 where the open-ended critic stage maximizes divergence, then recovers at
 depth 4 (7.85 [7.71, 7.99]). Constrained convergent stages act as attractors
-in output space — a cheap architectural lever for chain reliability, and one
+in output space, a cheap architectural lever for chain reliability, and one
 that corroborates the cascade-depth hallucination reduction reported by the
 Hallucination Cascade study from a different measurement angle.
 
@@ -343,7 +343,7 @@ Run `summarization|sum_4|d4|p2|middle` (divergence 1.010, the grid maximum):
 a paraphrase of the *fact-checker* prompt led it to output an analysis *about*
 the draft rather than a corrected draft; the downstream editor, receiving
 analysis instead of a summary, declined to edit and asked for the missing
-summary — producing a final output unrelated to the source article. The
+summary, producing a final output unrelated to the source article. The
 failure is qualitative and structural (a role-contract violation between
 stages), not a gradual drift. Full transcripts of the failed and baseline
 runs: `results/case_studies/`.
@@ -354,7 +354,7 @@ runs: `results/case_studies/`.
   (MiniLM); effect sizes may differ across model families and embedders.
 - Three tasks, five inputs each; task heterogeneity in our own results warns
   against over-generalizing any single trend.
-- Control arm is small (5 repeats per task × depth cell; 60 runs total) —
+- Control arm is small (5 repeats per task × depth cell; 60 runs total),
   sufficient to reveal the noise floor's magnitude and depth trend, not to
   tightly bound it. The perturbed-vs-control comparison at the critical cell
   is correspondingly low-powered (n_control = 5).
@@ -371,10 +371,10 @@ runs: `results/case_studies/`.
   convergent-stage repair we observe persist, saturate, or reverse in much
   longer chains (tens to hundreds of agents) is an open question we did not
   test. Large-scale multi-agent systems have been studied at this scale for
-  coordination quality and emergent behavior — e.g. a 25,000-run study of
+  coordination quality and emergent behavior (e.g. a 25,000-run study of
   coordination protocols across 4–256 agents [arXiv:2603.28990] and
   MegaAgent's autonomous systems scaling to hundreds of agents
-  [arXiv:2408.09955] — but, to our knowledge, no prior work measures how a
+  [arXiv:2408.09955]), but, to our knowledge, no prior work measures how a
   benign prompt perturbation propagates through chains at this scale. Whether
   the position effect strengthens, saturates, or is swamped by other noise
   sources as chain length grows by an order of magnitude or more is a natural
