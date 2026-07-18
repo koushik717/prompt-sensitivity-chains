@@ -16,7 +16,7 @@
 from Intrinsic Nondeterminism in Chained LLM Agents}}
 \author{Venkata Koushik\\
 \texttt{venkatakoushik777@gmail.com}}
-\date{July 17, 2026}
+\date{July 18, 2026}
 
 \begin{document}
 \maketitle
@@ -53,7 +53,7 @@ depth (Spearman $\rho = -0.196$) and structured-output schema violations are
 pipelines must control for nondeterminism amplification, and suggest that
 practitioners should invest prompt-hardening effort in early-position agents
 and convergent final stages. Harness, prompts, raw runs, and analysis are
-released for reproduction.\footnote{\texttt{https://github.com/koushik717/prompt-sensitivity-chains}}
+released for reproduction.\footnote{\url{https://github.com/koushik717/prompt-sensitivity-chains}}
 \end{abstract}
 
 \section{Introduction}
@@ -457,7 +457,15 @@ data.
   \item Our chains are limited to 4 stages; whether the position effect and
   convergent-stage repair we observe persist, saturate, or reverse in much
   longer chains (tens to hundreds of agents) is an open question we did not
-  test.
+  test. Large-scale multi-agent systems have been studied at this scale for
+  coordination quality and emergent behavior---e.g.\ a 25{,}000-run study of
+  coordination protocols across 4--256 agents \citep{selforganizing2026} and
+  MegaAgent's autonomous systems scaling to hundreds of agents
+  \citep{megaagent2024}---but, to our knowledge, no prior work measures how a
+  benign prompt perturbation propagates through chains at this scale. Whether
+  the position effect strengthens, saturates, or is swamped by other noise
+  sources as chain length grows by an order of magnitude or more is a natural
+  and, we think, important direction for future work.
 \end{itemize}
 
 \section{Conclusion}
@@ -473,7 +481,10 @@ as a cheap reliability mechanism.
 
 \section*{Acknowledgments}
 
-The author thanks Thai Le for feedback on an earlier draft of this paper.
+The author thanks Thai Le for feedback on an earlier draft of this paper,
+including the observation that the scaling question addressed in
+Section~6's final limitation is where this line of work becomes most
+interesting.
 
 \begin{thebibliography}{13}
 
@@ -545,6 +556,17 @@ He, H. / Thinking Machines Lab. 2025.
 Laban, P., Hayashi, H., Zhou, Y., Neville, J. 2025.
 \newblock LLMs Get Lost in Multi-Turn Conversation.
 \newblock arXiv:2505.06120.
+
+\bibitem[Anonymous(2026d)]{selforganizing2026}
+Drop the Hierarchy and Roles: How Self-Organizing LLM Agents Outperform
+Designed Structures. 2026.
+\newblock arXiv:2603.28990.
+
+\bibitem[Wang et al.(2024)]{megaagent2024}
+Wang, Q., et al. 2024.
+\newblock MegaAgent: A Large-Scale Autonomous LLM-Based Multi-Agent System
+Without Predefined SOPs.
+\newblock ACL 2025. arXiv:2408.09955.
 
 \end{thebibliography}
 

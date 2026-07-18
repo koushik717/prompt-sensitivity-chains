@@ -1,6 +1,6 @@
 # Noise or Sensitivity? Disentangling Prompt Perturbation Effects from Intrinsic Nondeterminism in Chained LLM Agents
 
-*Draft v2.3 — 2026-07-17. Numbers final (full grid, N=1470, 1335 valid perturbed
+*Draft v2.4 — 2026-07-17. Numbers final (full grid, N=1470, 1335 valid perturbed
 runs); all citations verified against the papers; human paraphrase review
 performed; repository public.*
 
@@ -248,7 +248,7 @@ agent-call cost $13.68 (from logged per-call token counts).
 - **Task success**: LLM-as-judge (`claude-sonnet-4-6`, temperature 0),
   depth-appropriate versioned rubrics (v2) grading the artifact the depth-k
   chain actually produces; judge model ≠ agent model; 10% double-judged →
-  95.8% exact agreement, mean |Δ| 0.04 (n = 167).
+  96.3% exact agreement, mean |Δ| 0.04 (n = 164).
 - **Schema violations**: JSON parse + required-key check (code_review,
   depth 4 only).
 
@@ -365,12 +365,20 @@ runs: `results/case_studies/`.
   circularity for an LLM-sensitivity study, documented in the repository);
   a full human review of all 118 active paraphrases was subsequently
   performed by an author, confirming meaning preservation.
-- LLM-as-judge scores, though reliable (95.8% exact agreement), share training
+- LLM-as-judge scores, though reliable (96.3% exact agreement), share training
   lineage with the agent model's vendor.
 - Our chains are limited to 4 stages; whether the position effect and
   convergent-stage repair we observe persist, saturate, or reverse in much
   longer chains (tens to hundreds of agents) is an open question we did not
-  test.
+  test. Large-scale multi-agent systems have been studied at this scale for
+  coordination quality and emergent behavior — e.g. a 25,000-run study of
+  coordination protocols across 4–256 agents [arXiv:2603.28990] and
+  MegaAgent's autonomous systems scaling to hundreds of agents
+  [arXiv:2408.09955] — but, to our knowledge, no prior work measures how a
+  benign prompt perturbation propagates through chains at this scale. Whether
+  the position effect strengthens, saturates, or is swamped by other noise
+  sources as chain length grows by an order of magnitude or more is a natural
+  and, we think, important direction for future work.
 
 ## 7. Conclusion
 
@@ -385,7 +393,9 @@ cheap reliability mechanism.
 
 ## Acknowledgments
 
-The author thanks Thai Le for feedback on an earlier draft of this paper.
+The author thanks Thai Le for feedback on an earlier draft of this paper,
+including the observation that the scaling question addressed in §6's final
+limitation is where this line of work becomes most interesting.
 
 ## References
 
