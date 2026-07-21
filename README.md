@@ -3,7 +3,7 @@
 Experiment harness, data, and paper for:
 
 > **Noise or Sensitivity? Disentangling Prompt Perturbation Effects from
-> Intrinsic Nondeterminism in Chained LLM Agents** — V. Koushik, 2026.
+> Intrinsic Nondeterminism in Chained LLM Agents.** V. K. Nakka, 2026.
 > arXiv link forthcoming. Paper source and PDF in [`paper/`](paper/).
 
 Measures whether output divergence caused by semantically-equivalent prompt
